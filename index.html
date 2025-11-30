@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Medication Reminder</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1, h2 {
+            color: #0066cc;
+        }
+
+        form {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 300px;
+        }
+
+        input, button {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            background-color: #0066cc;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #004c99;
+        }
+
+        ul {
+            margin-top: 20px;
+            list-style-type: none;
+            padding: 0;
+            width: 300px;
+        }
+
+        li {
+            background: #ffffff;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+    </style>
+    <script>
+        function speak(text) {
+            const msg = new SpeechSynthesisUtterance(text);
+            window.speechSynthesis.speak(msg);
+        }
+
+        function checkReminders() {
+            const now = new Date();
+            const currentTime = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
+            const reminderItems = document.querySelectorAll(".reminder");
+            reminderItems.forEach(item => {
+                const time = item.getAttribute("data-time");
+                const text = item.innerText;
+                if (time === currentTime) {
+                    speak(text);
+                }
+            });
+        }
+
+        setInterval(checkReminders, 60000); // check every minute
+    </script>
+</head>
+<body>
+    <h1>AI Medication Reminder</h1>
+    <form method="POST">
+        <input type="text" name="name" placeholder="Your name" required>
+        <input type="text" name="medicine" placeholder="Medicine name" required>
+        <input type="time" name="time" required>
+        <button type="submit">Add Reminder</button>
+    </form>
+
+    <h2>Scheduled Reminders</h2>
+    <ul>
+        {% for reminder in reminders %}
+            <li class="reminder" data-time="{{ reminder.time }}">
+                {{ reminder.name }}, take your {{ reminder.medicine }} at {{ reminder.time }}
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
